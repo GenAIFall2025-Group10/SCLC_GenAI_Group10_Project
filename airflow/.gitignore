@@ -1,0 +1,21 @@
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Airflow database files
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+airflow/logs/
+
+# VSCode settings
+.vscode/
+
+# Docker
+*.pid
