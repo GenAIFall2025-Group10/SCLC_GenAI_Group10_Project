@@ -1,5 +1,8 @@
 # --- Environment files ---
 .env
+venv/
+./Mdterm/venv/
+
 
 # --- Python ---
 __pycache__/
