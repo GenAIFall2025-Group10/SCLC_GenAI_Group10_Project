@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
@@ -991,6 +992,14 @@ with DAG(
         task_id='insert_to_snowflake',
         python_callable=insert_to_snowflake,
     )
-    
-    # Updated task dependencies (3 tasks instead of 4)
-    fetch_ids_task >> scrape_and_upload_task >> snowflake_task
+
+    #Trigger DAG 2
+    trigger_text_embeddings_pipeline = TriggerDagRunOperator(
+        task_id='trigger_text_embeddings_pipeline',
+        trigger_dag_id='text_embeddings_pipeline',
+        wait_for_completion=False,
+        reset_dag_run=True,
+        conf={"source": "pmc_paper_scraper_to_snowflake"}
+    )
+
+    fetch_ids_task >> scrape_and_upload_task >> snowflake_task >> trigger_text_embeddings_pipeline
