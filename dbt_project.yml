@@ -1,0 +1,52 @@
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: "oncodetect_data"
+version: "1.0.0"
+
+# This setting configures which "profile" dbt uses for this project.
+profile: "oncodetect_data"
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets: # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+models:
+  oncodetect_data:
+    # Removed the example config since you don't have that folder
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+# IMPORTANT: Configure seeds for your data files
+seeds:
+  oncodetect_data:
+    +schema: dbt_staging
+    +quote_columns: true  # Handles columns with spaces
+    combined_study_clinical_data:
+      +column_types:
+         "Study ID": varchar
+         "Patient ID": varchar
+         "Sample ID": varchar
+         "Mutation Count": varchar
+         "Diagnosis Age": varchar
+         "Year of Diagnosis": varchar
+         "Overall Survival (Months)": varchar
+         "Progress Free Survival (Months)": varchar
+         "Fraction Genome Altered": varchar
+         "TMB (nonsynonymous)": varchar
+         "Number of Samples Per Patient": varchar
+    gene_expression_data:
+      +quote_columns: false

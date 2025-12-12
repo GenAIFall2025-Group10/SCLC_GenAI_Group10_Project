@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: ONCODETECT_DB
+    schema: RAW_DATA
+    tables:
+      - name: clinical_data
+      - name: gene_expression
+      - name: compounds
+      - name: cell_lines
+      - name: experiments
+      - name: dose_response
