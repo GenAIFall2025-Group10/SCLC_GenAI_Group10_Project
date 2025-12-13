@@ -25,6 +25,11 @@ import uuid
 import base64
 import altair as alt
 
+# --- ADD THIS BLOCK HERE ---
+if not hasattr(st, "rerun"):
+    st.rerun = st.experimental_rerun
+# ---------------------------
+
 # ============================================================
 # 1. PAGE CONFIGURATION
 # ============================================================
@@ -354,6 +359,8 @@ if 'show_risk_prediction' not in st.session_state:
     st.session_state.show_risk_prediction = False
 if 'show_subtype_classification' not in st.session_state:
     st.session_state.show_subtype_classification = False
+if 'show_evaluation' not in st.session_state: 
+    st.session_state.show_evaluation = False
 
 # Chat and research state
 if 'chat_history' not in st.session_state:
@@ -822,22 +829,42 @@ def generate_insights_from_data(user_question, df, sql_query):
     try:
         if df.empty: return "No data found for this query."
         
+        # improved data context
         data_summary = f"Rows: {len(df)}, Columns: {len(df.columns)}\n"
-        data_summary += f"Data Sample:\n{df.head(5).to_string()}\n"
+        data_summary += f"Data Context:\n{df.head(10).to_string(index=False)}\n"
         
-        prompt = f"""You are a product analyst. Analyze this data to answer: "{user_question}"
-
-        Data:
+        # --- FIX 1: Explicit "Negative Prompting" to stop the UI bugs ---
+        prompt = f"""
+        You are an expert product analyst. 
+        User Question: "{user_question}"
+        
+        Data Table:
         {data_summary}
-
-        Provide 3 short, actionable insights (bullet points). Focus on trends, user behavior, or anomalies.
+        
+        Task:
+        Provide 3 specific, data-driven insights based ONLY on the data provided above.
+        
+        Crucial Formatting Rules:
+        1. Do NOT use markdown code blocks (no triple backticks).
+        2. Do NOT provide generic advice; reference specific numbers from the data.
+        3. Return a clean text list.
         """
 
+        # Escape single quotes for SQL safety
         prompt_escaped = prompt.replace("'", "''")
+        
+        # Call Cortex
         result = session.sql(f"SELECT SNOWFLAKE.CORTEX.COMPLETE('mistral-large', '{prompt_escaped}') as insights").collect()
-        return result[0]['INSIGHTS'].strip()
-    except:
-        return "Could not generate insights."
+        
+        raw_insight = result[0]['INSIGHTS']
+        
+        # --- FIX 2: Safety net to strip formatting if the model disobeys ---
+        clean_insight = raw_insight.replace("```", "").replace("markdown", "").strip()
+        
+        return clean_insight
+        
+    except Exception as e:
+        return f"Could not generate insights. Error: {str(e)}"
 
 def create_visualization(df, user_question, unique_key):
     """Auto-generate Altair chart with Navy Blue theme"""
@@ -1495,6 +1522,133 @@ Blended Response:"""
         return rag_response
 
 # ============================================================
+# 13b. EVALUATION & LOGGING LOGIC (NEW)
+# ============================================================
+
+def evaluate_metric_cortex(metric_name, prompt):
+    """Helper to run evaluation prompt with Mistral-Large"""
+    try:
+        prompt_escaped = prompt.replace("'", "''")
+        query = f"SELECT SNOWFLAKE.CORTEX.COMPLETE('mistral-large', '{prompt_escaped}') as response"
+        result = session.sql(query).collect()
+        response_text = result[0]['RESPONSE'].strip()
+        import re
+        match = re.search(r"0\.\d+|1\.0|0|1", response_text)
+        if match: return float(match.group())
+        return 0.0
+    except Exception as e:
+        print(f"Eval Error ({metric_name}): {e}")
+        return 0.0
+
+def find_ground_truth(user_query):
+    """Find matching Ground Truth in Golden Dataset"""
+    try:
+        query_escaped = user_query.replace("'", "''")
+        sql = f"""
+        WITH USER_Q AS (
+            SELECT SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m', '{query_escaped}') as vec
+        )
+        SELECT GROUND_TRUTH_ANSWER, VECTOR_COSINE_SIMILARITY(d.QUESTION_EMBEDDING, u.vec) as score
+        FROM ONCODETECT_DB.PRODUCT_ANALYTICS.GOLDEN_DATASET d, USER_Q u
+        ORDER BY score DESC
+        LIMIT 1
+        """
+        result = session.sql(sql).collect()
+        if result and result[0]['SCORE'] > 0.85:
+            return result[0]['GROUND_TRUTH_ANSWER']
+        return None
+    except: return None
+
+def evaluate_single_row(question, generated_answer, contexts):
+    """Run full evaluation suite for one row"""
+    ground_truth = find_ground_truth(question)
+    context_text = "\n---\n".join(contexts[:3]) if isinstance(contexts, list) else str(contexts)
+
+    # 1. Correctness
+    if ground_truth:
+        p_corr = f"Compare GENERATED ANSWER with GROUND TRUTH.\nTRUTH: {ground_truth}\nGEN: {generated_answer}\nRate 0.0 to 1.0 (1.0=Same Meaning). Output Number."
+        correctness = evaluate_metric_cortex('Correctness', p_corr)
+    else: correctness = None
+
+    # 2. Faithfulness
+    p_faith = f"Evaluate if ANSWER is supported by CONTEXTS.\nCONTEXTS: {context_text}\nANSWER: {generated_answer}\nRate 0.0 to 1.0. Output Number."
+    faithfulness = evaluate_metric_cortex('Faithfulness', p_faith)
+
+    # 3. Relevancy
+    p_rel = f"Evaluate if ANSWER addresses QUESTION.\nQ: {question}\nA: {generated_answer}\nRate 0.0 to 1.0. Output Number."
+    relevancy = evaluate_metric_cortex('Relevancy', p_rel)
+
+    # 4. Context Quality
+    p_ctx = f"Do CONTEXTS contain info for QUESTION?\nQ: {question}\nCTX: {context_text}\nRate 0.0 to 1.0. Output Number."
+    ctx_qual = evaluate_metric_cortex('Context', p_ctx)
+
+    valid_metrics = [m for m in [correctness, faithfulness, relevancy, ctx_qual] if m is not None]
+    overall = sum(valid_metrics) / len(valid_metrics) if valid_metrics else 0.0
+
+    return {'faithfulness': faithfulness, 'relevancy': relevancy, 'context_quality': ctx_qual, 'correctness': correctness, 'overall': overall}
+
+def log_interaction_fast(user_id, question, answer, contexts):
+    """
+    Log chat to DB immediately (Async style)
+    Uses Parameter Binding (?) to safely handle complex JSON and text.
+    """
+    try:
+        log_id = str(uuid.uuid4())
+        
+        # 1. Prepare clean JSON string (No manual escaping needed with binding!)
+        ctx_json = json.dumps(contexts)
+        
+        # 2. Use INSERT INTO ... SELECT with ? placeholders
+        # This is safer and supports PARSE_JSON(?) robustly
+        query = """
+        INSERT INTO ONCODETECT_DB.PRODUCT_ANALYTICS.RAG_EVALUATION_LOGS
+        (LOG_ID, TIMESTAMP, USER_ID, QUESTION, GENERATED_ANSWER, RETRIEVED_CONTEXTS, 
+         FAITHFULNESS_SCORE, RELEVANCY_SCORE, CONTEXT_QUALITY_SCORE, CORRECTNESS_SCORE, OVERALL_SCORE)
+        SELECT 
+            ?, 
+            CURRENT_TIMESTAMP(), 
+            ?, 
+            ?, 
+            ?, 
+            PARSE_JSON(?), 
+            NULL, NULL, NULL, NULL, NULL
+        """
+        
+        # 3. Pass values as a list. The driver handles all quotes/newlines automatically.
+        params = [log_id, user_id, question, answer, ctx_json]
+        
+        session.sql(query, params=params).collect()
+        
+    except Exception as e:
+        # Show error on screen so you know if it fails
+        print(f"Logging failed: {e}")
+        st.error(f"⚠️ Logging Failed: {str(e)}")
+
+def run_pending_evaluations():
+    """Admin Batch Job: Run Eval on NULL rows"""
+    df_pending = session.sql("SELECT LOG_ID, QUESTION, GENERATED_ANSWER, RETRIEVED_CONTEXTS FROM ONCODETECT_DB.PRODUCT_ANALYTICS.RAG_EVALUATION_LOGS WHERE OVERALL_SCORE IS NULL LIMIT 5").to_pandas()
+    
+    if df_pending.empty:
+        st.info("✅ No pending evaluations found.")
+        return
+
+    progress_bar = st.progress(0)
+    for idx, row in df_pending.iterrows():
+        contexts = json.loads(row['RETRIEVED_CONTEXTS']) if isinstance(row['RETRIEVED_CONTEXTS'], str) else row['RETRIEVED_CONTEXTS']
+        scores = evaluate_single_row(row['QUESTION'], row['GENERATED_ANSWER'], contexts)
+        
+        corr_val = scores['correctness'] if scores['correctness'] is not None else "NULL"
+        update_sql = f"""
+        UPDATE ONCODETECT_DB.PRODUCT_ANALYTICS.RAG_EVALUATION_LOGS
+        SET FAITHFULNESS_SCORE = {scores['faithfulness']}, RELEVANCY_SCORE = {scores['relevancy']},
+            CONTEXT_QUALITY_SCORE = {scores['context_quality']}, CORRECTNESS_SCORE = {corr_val}, OVERALL_SCORE = {scores['overall']}
+        WHERE LOG_ID = '{row['LOG_ID']}'
+        """
+        session.sql(update_sql).collect()
+        progress_bar.progress((idx + 1) / len(df_pending))
+    st.success("✅ Batch evaluation complete!")
+
+# ============================================================
 # 14. MULTI-AGENT QUERY PROCESSING
 # ============================================================
 
@@ -1649,6 +1803,15 @@ def process_user_query(query_text, user_id, username):
     # Calculate response time
     response_time_ms = int((time.time() - start_time) * 1000)
     has_sources = len(text_results) > 0 or len(image_results) > 0
+
+    try:
+        # Extract just the text from RAG results for logging
+        log_contexts = [r['CHUNK_TEXT'] for r in text_results[:3]] 
+        if arxiv_response: log_contexts.append(str(arxiv_response)[:500])
+        if web_response: log_contexts.append(str(web_response)[:500])
+        
+        log_interaction_fast(user_id, query_text, final_response, log_contexts)
+    except: pass
     
     return (final_response, text_results, image_results, response_time_ms, has_sources, 
             search_status, rag_confidence, combined_confidence, agent_used, rag_response, 
@@ -2034,7 +2197,12 @@ def show_admin_profile_page():
             send_kafka_event("sclc_user_authentication", "button_click", "admin_view_analytics", str(st.session_state.user_id), "clicked")
             start_analytics()
             st.rerun()
-    
+
+    with col2:
+        if st.button("⚖️ Model Evaluation", type="secondary", use_container_width=True):
+            st.session_state.show_evaluation = True
+            st.rerun()
+            
     st.write("---")
     if st.button("🚪 Logout"):
         logout()
@@ -3230,7 +3398,76 @@ def show_risk_prediction_page():
     </div>
     """, unsafe_allow_html=True)
     
+# ============================================================
+# 20b. UI PAGES - MODEL EVALUATION (ADMIN)
+# ============================================================
+
+def show_model_evaluation_page():
+    render_sidebar_profile()
+    st.markdown("""
+    <div style="
+        background-color: #001F3F; 
+        padding: 20px; 
+        border-radius: 10px; 
+        text-align: center; 
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+        <h1 style="color: white; margin: 0; font-family: sans-serif;">
+            ⚖️ MODEL EVALUATION CENTER
+        </h1>
+    </div>
+    """, unsafe_allow_html=True)
+
     
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("🚀 Run Pending Evals", type="primary", use_container_width=True):
+            with st.spinner("Judge AI is evaluating..."):
+                run_pending_evaluations()
+                st.rerun()
+    with col2:
+        if st.button("🔄 Refresh Data", use_container_width=True): st.rerun()
+
+    st.write("---")
+    st.markdown("### 📊 Recent Evaluation Logs")
+    
+    try:
+        # Fetch data
+        df_logs = session.sql("""
+            SELECT 
+                TIMESTAMP, 
+                QUESTION, 
+                CORRECTNESS_SCORE as "ACCURACY", 
+                FAITHFULNESS_SCORE as "FAITH",
+                RELEVANCY_SCORE as "RELEVANCY",       -- Added
+                CONTEXT_QUALITY_SCORE as "CONTEXT",
+                OVERALL_SCORE as "OVERALL", 
+                GENERATED_ANSWER
+            FROM ONCODETECT_DB.PRODUCT_ANALYTICS.RAG_EVALUATION_LOGS
+            ORDER BY TIMESTAMP DESC 
+            LIMIT 50
+        """).to_pandas()
+        
+        if not df_logs.empty:
+            # ✅ NEW LINE (Plain table, no dependencies)
+            st.dataframe(
+                df_logs, 
+                use_container_width=True, 
+                height=500
+            )
+        else: 
+            st.info("No logs found in the table yet.")
+            
+    except Exception as e:
+        # 🔴 THIS REVEALS THE REAL ERROR
+        st.error(f"Error fetching logs: {str(e)}")
+
+    st.write("---")
+    if st.button("← Back to Admin Profile"):
+        st.session_state.show_evaluation = False
+        st.rerun()
+        
 # ============================================================
 # 21. UI PAGES - SUBTYPE CLASSIFICATION (NEW)
 # ============================================================
@@ -3818,14 +4055,14 @@ def show_subtype_classification_page():
                 """, unsafe_allow_html=True)
                 
                 # AI Clinical Assessment - Each section in separate card with H3 headings
+                # ==========================================
+                # IMPROVED AI CLINICAL ASSESSMENT PARSER
+                # ==========================================
                 st.markdown("<h3 class='section-h3'>📋 AI Clinical Assessment</h3>", unsafe_allow_html=True)
                 st.caption("*Generated by Llama 3.1 405B (Snowflake Cortex AI)*")
-                
-                # Parse clinical analysis into sections
-                import re
-                
-                # Define sections to extract
-                sections = [
+
+                # 1. Define the sections we expect (in order)
+                expected_sections = [
                     ("SUBTYPE INTERPRETATION", "🎯"),
                     ("KEY BIOMARKER FINDINGS", "🔬"),
                     ("DIFFERENTIAL DIAGNOSIS", "🧪"),
@@ -3833,40 +4070,78 @@ def show_subtype_classification_page():
                     ("PROGNOSIS", "📊")
                 ]
                 
-                # Try to parse sections from clinical_analysis
-                for section_name, icon in sections:
-                    # Try different patterns to find the section
-                    patterns = [
-                        rf'\*\*{section_name}:\*\*\s*(.*?)(?=\*\*[A-Z]|\Z)',
-                        rf'{section_name}:\s*(.*?)(?=[A-Z][A-Z\s]+:|\Z)',
-                        rf'\d+\.\s*{section_name}[:\s]*(.*?)(?=\d+\.\s*[A-Z]|\Z)'
-                    ]
-                    
-                    content = None
-                    for pattern in patterns:
-                        match = re.search(pattern, clinical_analysis, re.DOTALL | re.IGNORECASE)
-                        if match:
-                            content = match.group(1).strip()
-                            break
-                    
-                    if content:
-                        st.markdown(f"""
-                        <div class='analysis-card'>
-                            <h3>{icon} {section_name}</h3>
-                            <p>{content}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                # 2. Robust Regex to find section starts
+                # Looks for: (Optional Newline) + (Optional stars/bold) + (Optional Number) + Section Name
+                import re
                 
-                # If no sections were parsed, show the full text
-                if not any(re.search(rf'{s[0]}', clinical_analysis, re.IGNORECASE) for s in sections):
+                # We work on the RAW text first to find indices
+                lower_text = clinical_analysis.lower()
+                
+                # Create a map of {index: (section_name, icon)}
+                section_indices = {}
+                
+                for sec_name, icon in expected_sections:
+                    # Pattern: match "1. SECTION NAME" or "**SECTION NAME**" or "SECTION NAME:"
+                    # We use simple string search for the name as it's most reliable
+                    idx = lower_text.find(sec_name.lower())
+                    
+                    if idx != -1:
+                        # Backtrack to find the true start (the number or bullet before the name)
+                        # Look at the 10 chars before the match
+                        pre_text = lower_text[max(0, idx-10):idx]
+                        
+                        # Find where the number starts (e.g., "3. ")
+                        number_match = re.search(r'(\d+\.|-|\*)\s*$', pre_text)
+                        
+                        start_pos = idx
+                        if number_match:
+                            # Adjust start position back to include the number
+                            start_pos = max(0, idx - 10 + number_match.start())
+                            
+                        section_indices[start_pos] = (sec_name, icon)
+
+                # 3. Sort indices to process in order
+                sorted_starts = sorted(section_indices.keys())
+                
+                # 4. Extract and Display
+                if sorted_starts:
+                    for i, start_idx in enumerate(sorted_starts):
+                        # Determine end index (start of next section or end of string)
+                        end_idx = sorted_starts[i+1] if i + 1 < len(sorted_starts) else len(clinical_analysis)
+                        
+                        # Extract raw chunk
+                        raw_chunk = clinical_analysis[start_idx:end_idx]
+                        
+                        # Get metadata
+                        sec_name, icon = section_indices[start_idx]
+                        
+                        # --- CLEANING STEP ---
+                        # Remove the header itself from the chunk so we don't repeat it
+                        # Regex to remove "3. SECTION NAME:" from the start of the content
+                        clean_content = re.sub(rf'^.*?{sec_name}[:\s\*]*', '', raw_chunk, flags=re.IGNORECASE|re.DOTALL).strip()
+                        
+                        # Remove markdown artifacts (** and *)
+                        clean_content = clean_content.replace('**', '').replace('##', '').strip()
+                        clean_content = re.sub(r'\s*\*+\s*$', '', clean_content).strip()
+                        # Only show if content exists
+                        if len(clean_content) > 5:
+                            st.markdown(f"""
+                            <div class='analysis-card'>
+                                <h3>{icon} {sec_name}</h3>
+                                <p>{clean_content}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                else:
+                    # Fallback if parsing fails entirely
+                    clean_full = clinical_analysis.replace('**', '').replace('##', '')
                     st.markdown(f"""
                     <div class='analysis-card'>
                         <h3>📋 Clinical Analysis</h3>
-                        <p>{clinical_analysis}</p>
+                        <p>{clean_full}</p>
                     </div>
                     """, unsafe_allow_html=True)
-                
-                st.success(f"✅ Complete analysis finished! (Generated: {timestamp})")
+
+                st.success(f"✅ Analysis complete! (Generated: {timestamp})")
                 
                 # Download report - #081f37 button
                 report_text = f"""
@@ -3938,6 +4213,8 @@ def main():
             # Admin user
             if st.session_state.show_analytics:
                 show_analytics_page()
+            elif st.session_state.get('show_evaluation', False): # Add this check
+                show_model_evaluation_page()
             else:
                 show_admin_profile_page()
         else:
