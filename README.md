@@ -170,10 +170,6 @@ The platform implements 7 specialized agents:
 | **Voyage-Multimodal-3** | Image Embeddings | Creates vector representations of research images |
 | **Llama 3.1-405B** | Large Language Model | Powers AI analysis, risk interpretation, subtype classification |
 | **Mistral-Large** | Evaluation Model | Assesses LLM response quality against ground truth |
-| **SerpAPI** | Web Search | Enables real-time web search capabilities |
-| **Arxiv API** | Research Paper Retrieval | Fetches external academic papers |
-| **Google Maps API** | Geographic Services | Provides cancer treatment center recommendations |
-| **PubMed API** | Medical Literature | Source for SCLC research papers |
 
 ---
 
