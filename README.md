@@ -152,23 +152,6 @@ The platform implements 7 specialized agents:
 | Aditi Deshmukh | 33% |
 | Siddharth Pawar | 33% |
 
----
-
-## 📑 Table of Contents
-
-- [Tech Stack](#-tech-stack)
-- [Installation & Setup](#-installation--setup)
-- [Data Pipeline Architecture](#-data-pipeline-architecture)
-- [Agent System](#-agent-system)
-- [Application Features](#-application-features)
-- [Product Analytics](#-product-analytics)
-- [Evaluation Metrics](#-evaluation-metrics)
-- [API Documentation](#-api-documentation)
-- [Contributing](#-contributing)
-- [License](#-license)
-
----
-
 ## 🛠️ Tech Stack
 
 | Technology | Purpose | Details |
@@ -194,7 +177,27 @@ The platform implements 7 specialized agents:
 
 ---
 
-<!-- Add remaining sections here based on your table of contents -->
+## 📚 References
+
+### API Documentation
+- [SerpAPI Documentation](https://serpapi.com/search-api) - Web Search API
+- [Google Maps API Documentation](https://developers.google.com/maps/documentation) - Geographic Services
+- [PubMed API](https://www.ncbi.nlm.nih.gov/home/develop/api/) - Medical Literature Access
+
+### AI & ML Platforms
+- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) - LLM & Embedding Models
+- [Claude AI by Anthropic](https://www.anthropic.com/claude) - AI Assistant
+
+### Data Engineering Tools
+- [DBT Documentation](https://docs.getdbt.com/docs/introduction) - Data Transformation
+- [Apache Airflow Setup Tutorial](https://www.youtube.com/results?search_query=apache+airflow+tutorial) - Workflow Orchestration
+
+### Additional Resources
+- [Confluent Kafka Documentation](https://docs.confluent.io/) - Event Streaming
+- [Streamlit Documentation](https://docs.streamlit.io/) - Application Framework
+- [Amazon S3 Documentation](https://docs.aws.amazon.com/s3/) - Object Storage
+
+---
 
 ## 📄 License
 
