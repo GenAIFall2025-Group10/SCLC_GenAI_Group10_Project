@@ -1,8 +1,7 @@
-name: app_environment
+name: oncodetect_env
 channels:
   - snowflake
 dependencies:
   - python=3.11.*
   - requests=2.32.5
-  - snowflake-snowpark-python=
-  - streamlit=
+  - matplotlib
