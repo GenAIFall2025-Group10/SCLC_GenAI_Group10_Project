@@ -1,0 +1,713 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>OncoDetectAI</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2c78fb76-7a6e-8061-bd19-e08df351c87e" class="page sans"><header><div class="page-header-icon undefined"><img class="icon" src="lungs.png"/></div><h1 class="page-title" dir="auto">OncoDetectAI</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="2c78fb76-7a6e-8029-9374-e54fe804bfb8" class="">Project Tracker</h1></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-80b3-8761-c008204876a0" class="">📊 Project Overview</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80a3-8860-f9b6fb0f2da6" class=""><strong>Timeline:</strong> September 13 - December 12, 2024<br/><strong>Team:</strong> Aditi Deshmukh, Siddharth Pawar, Pranali Chipkar<br/><strong>Status:</strong> ✅ Completed<br/><strong>Total Sprints:</strong> 7<br/><strong>Total Tasks:</strong> 80</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-80c9-9740-e3cb9f9eebc3"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-8011-9265-c610c1f4b9c9" class="">🎯 Sprint 1: Foundation &amp; Environment Setup</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80ab-9870-fc15cb5e69f6" class=""><strong>Duration:</strong> Sept 13 - Sept 26 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Establish development environment and complete initial research</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-80e9-ad04-d7e2ad7ccb9e" class="">Sprint 1 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-8080-9668-e97a9b3e8859" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-8000-9442-f97f22dfa9c7"><td class="cell-title"><a href="https://www.notion.so/Research-SCLC-literature-and-identify-relevant-papers-2c78fb767a6e80009442f97f22dfa9c7?pvs=21">Research SCLC literature and identify relevant papers</a></td><td class="cell-EYMX"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-~Rh`"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-P?St"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-Z]j@">Research</td></tr><tr id="2c78fb76-7a6e-8097-8132-e241fdb36bf5"><td class="cell-title"><a href="https://www.notion.so/Review-DBT-documentation-for-data-transformation-2c78fb767a6e80978132e241fdb36bf5?pvs=21">Review DBT documentation for data transformation</a></td><td class="cell-EYMX"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-~Rh`"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-P?St"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-Z]j@">Research</td></tr><tr id="2c78fb76-7a6e-808e-9adb-ff5a64fe7d75"><td class="cell-title"><a href="https://www.notion.so/Review-Snowflake-Cortex-AI-documentation-2c78fb767a6e808e9adbff5a64fe7d75?pvs=21">Review Snowflake Cortex AI documentation</a></td><td class="cell-EYMX"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-~Rh`"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-P?St"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-Z]j@">Research</td></tr><tr id="2c78fb76-7a6e-80c8-80a8-d147aa95671a"><td class="cell-title"><a href="https://www.notion.so/Configure-Airflow-environment-using-Docker-2c78fb767a6e80c880a8d147aa95671a?pvs=21">Configure Airflow environment using Docker</a></td><td class="cell-EYMX"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-~Rh`"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-P?St"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-Z]j@">Setup</td></tr><tr id="2c78fb76-7a6e-804a-9e5d-cd7fd7118820"><td class="cell-title"><a href="https://www.notion.so/Create-env-configuration-files-and-Dockerfile-for-Airflow-2c78fb767a6e804a9e5dcd7fd7118820?pvs=21">Create .env configuration files and Dockerfile for Airflow</a></td><td class="cell-EYMX"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-~Rh`"><span class="selected-value select-value-color-green">Low</span></td><td class="cell-P?St"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-Z]j@">Setup</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8081-bf32-d93d513fde88" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8030-b394-c8db03ed768a" class="">- Docker container compatibility issues with different operating systems<br/>- Initial Airflow configuration complexity</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-8037-9c74-f9ae44623cbd"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-80ae-bf42-d7a5c1cc9151" class="">🚀 Sprint 2: Data Pipeline Development &amp; Deployment</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80cd-9a42-ca5d8fe8a1f4" class=""><strong>Duration:</strong> Sept 27 - Oct 10 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Build and deploy multimodal data ingestion pipelines</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-8057-90ff-f7bf506596b2" class="">Sprint 2 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-801c-9144-d1090ed61d2c" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-803c-8cce-f871d9650c43"><td class="cell-title"><a href="https://www.notion.so/Set-up-S3-buckets-for-PDF-storage-and-image-storage-2c78fb767a6e803c8ccef871d9650c43?pvs=21">Set up S3 buckets for PDF storage and image storage</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-r=UP">Setup</td></tr><tr id="2c78fb76-7a6e-8013-92c1-e4d88f62273c"><td class="cell-title"><a href="https://www.notion.so/Define-DDL-schemas-for-unstructured-data-tables-in-Snowflake-2c78fb767a6e801392c1e4d88f62273c?pvs=21">Define DDL schemas for unstructured data tables in Snowflake</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-r=UP">Development</td></tr><tr id="2c78fb76-7a6e-8097-85ce-dbe3a6181aeb"><td class="cell-title"><a href="https://www.notion.so/Develop-DAG-to-fetch-SCLC-papers-from-PubMed-and-upload-to-S3-2c78fb767a6e809785cedbe3a6181aeb?pvs=21">Develop DAG to fetch SCLC papers from PubMed and upload to S3</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-red">High</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-r=UP">Development</td></tr><tr id="2c78fb76-7a6e-807b-b22e-c3da255163ba"><td class="cell-title"><a href="https://www.notion.so/Develop-DAG-for-text-embedding-pipeline-with-Snowflake-Arctic-2c78fb767a6e807bb22ec3da255163ba?pvs=21">Develop DAG for text embedding pipeline with Snowflake Arctic</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-red">High</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-r=UP">Development</td></tr><tr id="2c78fb76-7a6e-8035-9ebd-caebcc368d9b"><td class="cell-title"><a href="https://www.notion.so/Develop-DAG-for-image-embedding-pipeline-with-Voyage-Multimodal-2c78fb767a6e80359ebdcaebcc368d9b?pvs=21">Develop DAG for image embedding pipeline with Voyage Multimodal</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-red">High</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-r=UP">Development</td></tr><tr id="2c78fb76-7a6e-809a-8017-ef5ddae5e141"><td class="cell-title"><a href="https://www.notion.so/Deploy-Airflow-DAGs-to-GitHub-repository-via-VS-Code-2c78fb767a6e809a8017ef5ddae5e141?pvs=21">Deploy Airflow DAGs to GitHub repository via VS Code</a></td><td class="cell-M^FF"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-xmmu"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-Xb_J"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-r=UP">Deployment</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-800c-845f-e977849963b3" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-80ec-b46b-cf31ce0db5f0" class="">- Papers being fetched via Airflow took longer than expected due to large file sizes<br/>- XCom errors in Airflow when passing data between tasks<br/>- Batch processing in Airflow implementation to reduce load and processing time<br/>- S3 bucket permission configurations</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-808d-9834-d7457e154b2a"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-802e-819c-d4254f7af589" class="">🗃️ Sprint 3: DBT Data Modeling &amp; Transformation</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80f3-8675-d27a3732c780" class=""><strong>Duration:</strong> Oct 11 - Oct 24 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Build structured data transformation pipeline using DBT</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-80cd-be91-cd144a97914e" class="">Sprint 3 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-809e-8c75-d9b0f574a43d" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-802f-8da9-e4aefc246468"><td class="cell-title"><a href="https://www.notion.so/Create-DBT-Staging-Models-for-Raw-Clinical-Genomic-Data-2c78fb767a6e802f8da9e4aefc246468?pvs=21">Create DBT Staging Models for Raw Clinical &amp; Genomic Data</a></td><td class="cell-=@hP"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-wJ}E"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-c_Z?"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-iFH~">Development</td></tr><tr id="2c78fb76-7a6e-8078-8136-c32a6b12c8c8"><td class="cell-title"><a href="https://www.notion.so/Implement-Data-Quality-Validation-Tests-in-Staging-Layer-2c78fb767a6e80788136c32a6b12c8c8?pvs=21">Implement Data Quality &amp; Validation Tests in Staging Layer</a></td><td class="cell-=@hP"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-wJ}E"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-c_Z?"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-iFH~">Development</td></tr><tr id="2c78fb76-7a6e-80a3-9f53-cb28e2e98ed3"><td class="cell-title"><a href="https://www.notion.so/Develop-Intermediate-Models-for-Biomarker-Risk-Feature-Engineering-2c78fb767a6e80a39f53cb28e2e98ed3?pvs=21">Develop Intermediate Models for Biomarker &amp; Risk Feature Engineering</a></td><td class="cell-=@hP"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-wJ}E"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-c_Z?"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-iFH~">Development</td></tr><tr id="2c78fb76-7a6e-80d8-b916-e2be048ee09a"><td class="cell-title"><a href="https://www.notion.so/Build-Mart-Level-ML-Feature-Tables-2c78fb767a6e80d8b916e2be048ee09a?pvs=21">Build Mart-Level ML Feature Tables</a></td><td class="cell-=@hP"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-wJ}E"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-c_Z?"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-iFH~">Development</td></tr><tr id="2c78fb76-7a6e-8039-a180-e3d5c4af4e48"><td class="cell-title"><a href="https://www.notion.so/Configure-Snowflake-Connections-via-profiles-yml-2c78fb767a6e8039a180e3d5c4af4e48?pvs=21">Configure Snowflake Connections via profiles.yml</a></td><td class="cell-=@hP"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-wJ}E"><span class="selected-value select-value-color-red">High</span></td><td class="cell-c_Z?"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-iFH~">Setup</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8040-b7e8-ca6007350caa" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-80e6-adfb-c7d8a4d030de" class="">- Snowflake connection authentication errors via profiles.yml<br/>- Data quality issues with raw clinical data containing null values<br/>- Complex transformations for biomarker feature engineering</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-80d6-9a18-de9217d32cfe"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-80e9-84a6-d28251547286" class="">📊 Sprint 4: Midterm Deliverables &amp; Subtype Classification</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-8043-b574-db5e5d544039" class=""><strong>Duration:</strong> Oct 25 - Nov 7 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Complete midterm requirements and build SCLC subtype classification feature</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-806c-89c1-c9b28819c3e0" class="">Sprint 4 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-8044-90e0-c73d94e57ab2" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-80cf-9710-ca5aa796339f"><td class="cell-title"><a href="https://www.notion.so/Midterm-ppt-2c78fb767a6e80cf9710ca5aa796339f?pvs=21">Midterm ppt</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-VpVR">Documentation</td></tr><tr id="2c78fb76-7a6e-8066-ae6f-edb970fad8d5"><td class="cell-title"><a href="https://www.notion.so/Midterm-paper-research-and-code-2c78fb767a6e8066ae6fedb970fad8d5?pvs=21">Midterm paper research and code</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-red">High</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-VpVR">Documentation</td></tr><tr id="2c78fb76-7a6e-806e-a64e-cc3b32a84d11"><td class="cell-title"><a href="https://www.notion.so/Midterm-demo-implementation-logic-2c78fb767a6e806ea64ecc3b32a84d11?pvs=21">Midterm demo implementation logic</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-VpVR">Development</td></tr><tr id="2c78fb76-7a6e-8005-818e-d0e7d243ac4c"><td class="cell-title"><a href="https://www.notion.so/Quick-classification-logic-for-sclc-subtype-2c78fb767a6e8005818ed0e7d243ac4c?pvs=21">Quick classification logic for sclc subtype</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-VpVR">Development</td></tr><tr id="2c78fb76-7a6e-802d-8648-ced1f2829cb3"><td class="cell-title"><a href="https://www.notion.so/Full-analysis-logic-for-sclc-subtype-results-2c78fb767a6e802d8648ced1f2829cb3?pvs=21">Full analysis logic for sclc subtype results</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-red">High</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-VpVR">Development</td></tr><tr id="2c78fb76-7a6e-802f-9524-e061f39f92e5"><td class="cell-title"><a href="https://www.notion.so/Setup-UI-page-for-Subtype-classification-2c78fb767a6e802f9524e061f39f92e5?pvs=21">Setup UI page for Subtype classification</a></td><td class="cell-RjG`"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-mIHA"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-i`lN"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-VpVR">Development</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-808c-abad-f6dfb5489320" class=""><strong>Challenges Faced:</strong><br/>- Subtype classification logic required multiple iterations<br/>- Code refactoring needed for demo-ready prototype</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-80a7-9e13-c66d70d1e33f"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-8090-ab0c-fa1c6af7cc41" class="">💻 Sprint 5: Streamlit Application - User Management &amp; Risk Prediction</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80b0-b993-e093a328b252" class=""><strong>Duration:</strong> Nov 8 - Nov 21 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Build user authentication, risk prediction features, and Maps integration</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-80b9-93eb-fecc031eec57" class="">Sprint 5 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-8030-b791-e446a396dea1" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-8021-b44d-ff68507aedba"><td class="cell-title"><a href="https://www.notion.so/Create-user-sign-up-and-login-page-2c78fb767a6e8021b44dff68507aedba?pvs=21">Create user sign up and login page</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-803d-b6e8-cc9e2e182caf"><td class="cell-title"><a href="https://www.notion.so/Store-user-authentication-details-in-SF-User-management-schema-2c78fb767a6e803db6e8cc9e2e182caf?pvs=21">Store user authentication details in SF (User management schema)</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-8034-8447-f1e1609b3a90"><td class="cell-title"><a href="https://www.notion.so/Setup-feedback-page-2c78fb767a6e80348447f1e1609b3a90?pvs=21">Setup feedback page</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80ce-8c49-ea54a63709dd"><td class="cell-title"><a href="https://www.notion.so/Store-feedback-data-in-a-separate-table-2c78fb767a6e80ce8c49ea54a63709dd?pvs=21">Store feedback data in a separate table</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-8001-808b-e254c4176a8e"><td class="cell-title"><a href="https://www.notion.so/Create-profile-page-for-user-including-main-buttons-2c78fb767a6e8001808be254c4176a8e?pvs=21">Create profile page for user including main buttons</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80b6-b527-e323b20c6cd4"><td class="cell-title"><a href="https://www.notion.so/Create-profile-page-for-user-including-the-product-analytics-button-2c78fb767a6e80b6b527e323b20c6cd4?pvs=21">Create profile page for user including the product analytics button</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80ba-b1f8-cc8da93c65b5"><td class="cell-title"><a href="https://www.notion.so/Quick-prediction-logic-for-risk-2c78fb767a6e80bab1f8cc8da93c65b5?pvs=21">Quick prediction logic for risk</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80a9-a4cc-d6d564ef32b6"><td class="cell-title"><a href="https://www.notion.so/Full-AI-analysis-logic-for-risk-prediction-2c78fb767a6e80a9a4ccd6d564ef32b6?pvs=21">Full AI analysis logic for risk prediction</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-8021-ba7f-f6b8bda4844e"><td class="cell-title"><a href="https://www.notion.so/Integrating-in-house-embeddings-to-enhance-AI-analysis-for-risk-prediction-2c78fb767a6e8021ba7ff6b8bda4844e?pvs=21">Integrating in-house embeddings to enhance AI analysis for risk prediction</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-807c-9188-d753192be9a6"><td class="cell-title"><a href="https://www.notion.so/Setup-UI-for-risk-prediction-page-2c78fb767a6e807c9188d753192be9a6?pvs=21">Setup UI for risk prediction page</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-806d-9fdd-e9cb53941558"><td class="cell-title"><a href="https://www.notion.so/Setup-logic-for-risk-categories-2c78fb767a6e806d9fdde9cb53941558?pvs=21">Setup logic for risk categories</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80fb-a689-ce05ee993316"><td class="cell-title"><a href="https://www.notion.so/Map-agent-for-high-risk-patients-2c78fb767a6e80fba689ce05ee993316?pvs=21">Map agent for high risk patients</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-~Jm^">Development</td></tr><tr id="2c78fb76-7a6e-80d9-8fd5-fde13568b5f8"><td class="cell-title"><a href="https://www.notion.so/Setup-network-integrations-for-google-maps-api-2c78fb767a6e80d98fd5fde13568b5f8?pvs=21">Setup network integrations for google maps api</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-~Jm^">Setup</td></tr><tr id="2c78fb76-7a6e-8022-aad4-d683498a66d8"><td class="cell-title"><a href="https://www.notion.so/Maps-logic-based-on-location-2c78fb767a6e8022aad4d683498a66d8?pvs=21">Maps logic based on location</a></td><td class="cell-XbBp"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-t\QT"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~QP_"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-~Jm^">Development</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8027-b1a9-ce65938a1e69" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8043-8de8-c0ae3f7ee1b0" class="">- Network integrations for Google Maps API setup and configuration<br/>- Integrating and fine-tuning embedding-based context for Full AI Analysis in risk prediction<br/>- Streamlit session state management for user authentication<br/>- UI responsiveness issues when loading large datasets</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-809b-ab0b-dddc0d702ce2"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-8014-b0da-ffa867d6d598" class="">🤖 Sprint 6: Research Assistant - Multi-Agent RAG System</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-80b7-9146-ec015fb6e4d7" class=""><strong>Duration:</strong> Nov 22 - Dec 5 (2 weeks)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Build intelligent research assistant with multi-agent architecture</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-8098-ab4b-e77ec729cedf" class="">Sprint 6 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-8038-b375-fbe019fc8f75" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-8069-8c7c-f485f843dc7c"><td class="cell-title"><a href="https://www.notion.so/Work-on-RAG-agent-logic-for-research-assistant-2c78fb767a6e80698c7cf485f843dc7c?pvs=21">Work on RAG agent logic for research assistant</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-80f2-9ec9-c29c8a177a61"><td class="cell-title"><a href="https://www.notion.so/Work-on-Arxiv-agent-logic-for-research-assistant-2c78fb767a6e80f29ec9c29c8a177a61?pvs=21">Work on Arxiv agent logic for research assistant</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-800e-9173-ffa643d00028"><td class="cell-title"><a href="https://www.notion.so/Store-serp-api-key-into-config-table-2c78fb767a6e800e9173ffa643d00028?pvs=21">Store serp api key into config table</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-]XWW">Setup</td></tr><tr id="2c78fb76-7a6e-80be-9e7e-e4ddbc05c3ae"><td class="cell-title"><a href="https://www.notion.so/Work-on-websearch-agent-logic-for-research-agent-2c78fb767a6e80be9e7ee4ddbc05c3ae?pvs=21">Work on websearch agent logic for research agent</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-80f1-a91c-fe60451e17fd"><td class="cell-title"><a href="https://www.notion.so/Work-on-logic-for-saving-research-notes-2c78fb767a6e80f1a91cfe60451e17fd?pvs=21">Work on logic for saving research notes</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-8097-923a-d781c75dd632"><td class="cell-title"><a href="https://www.notion.so/Add-translation-summarization-features-to-the-chat-2c78fb767a6e8097923ad781c75dd632?pvs=21">Add translation, summarization features to the chat</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-80d2-8b80-e6661e0d9312"><td class="cell-title"><a href="https://www.notion.so/Decide-on-threshold-to-call-the-3-agents-as-per-response-confidence-2c78fb767a6e80d28b80e6661e0d9312?pvs=21">Decide on threshold to call the 3 agents as per response confidence</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-8031-bde2-fca59a53b800"><td class="cell-title"><a href="https://www.notion.so/Create-networks-for-arxiv-and-websearch-access-integrations-2c78fb767a6e8031bde2fca59a53b800?pvs=21">Create networks for arxiv and websearch access integrations</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-]XWW">Setup</td></tr><tr id="2c78fb76-7a6e-8057-a40a-ff5747e69129"><td class="cell-title"><a href="https://www.notion.so/UI-Setup-for-research-assistant-page-2c78fb767a6e8057a40aff5747e69129?pvs=21">UI Setup for research assistant page</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-red">High</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-]XWW">Development</td></tr><tr id="2c78fb76-7a6e-804b-b95b-d375c5bfcb71"><td class="cell-title"><a href="https://www.notion.so/Making-UI-uniform-and-clean-across-all-pages-2c78fb767a6e804bb95bd375c5bfcb71?pvs=21">Making UI uniform and clean across all pages</a></td><td class="cell-=\mt"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-ZPrP"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-QWQo"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-]XWW">Development</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-802b-bcfd-e1cd339dd187" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-8091-8231-fdfa33df4b4b" class="">- Network integrations for SERP API access and authentication<br/>- Arxiv library access setup and integration<br/>- Agent orchestration and determining optimal confidence thresholds<br/>- Balancing response time with agent accuracy</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-8078-9308-cdb6514b54fa"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-802f-8c3a-c783039dcb37" class="">📈 Sprint 7: Product Analytics &amp; Final Documentation</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-807e-ad58-c90b8cfd1884" class=""><strong>Duration:</strong> Dec 6 - Dec 12 (1 week)<br/><strong>Status:</strong> ✅ Completed<br/><strong>Goal:</strong> Implement Kafka-based analytics pipeline and complete all documentation</p></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-801f-81ae-f2cc25d9e25e" class="">Sprint 7 Tasks</h3></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-80b1-ace7-e11c0b4fc031" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Task</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Priority</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Assignee</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Type</th></tr></thead><tbody><tr id="2c78fb76-7a6e-8036-8890-cd4c21b073d2"><td class="cell-title"><a href="https://www.notion.so/Setup-Confluent-Cloud-2c78fb767a6e80368890cd4c21b073d2?pvs=21">Setup Confluent Cloud</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Setup</td></tr><tr id="2c78fb76-7a6e-80a1-85ff-cf32e9703af5"><td class="cell-title"><a href="https://www.notion.so/Setup-topic-and-event-structure-2c78fb767a6e80a185ffcf32e9703af5?pvs=21">Setup topic and event structure</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-8001-bd16-cd66d620a678"><td class="cell-title"><a href="https://www.notion.so/Snowflake-sink-connector-to-Confluent-Cloud-2c78fb767a6e8001bd16cd66d620a678?pvs=21">Snowflake sink connector to Confluent Cloud</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-8009-a008-ec23d0d9f117"><td class="cell-title"><a href="https://www.notion.so/Store-api-keys-bootstrap-url-and-rest-api-url-into-config-table-2c78fb767a6e8009a008ec23d0d9f117?pvs=21">Store api keys, bootstrap url and rest api url into config table</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-&gt;g_H">Setup</td></tr><tr id="2c78fb76-7a6e-80ae-af76-cf27e0e8c46f"><td class="cell-title"><a href="https://www.notion.so/Trigger-Kafka-events-on-user_authentication-success-and-failures-2c78fb767a6e80aeaf76cf27e0e8c46f?pvs=21">Trigger Kafka events on user_authentication success and failures</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-806d-b0d2-ec30fcdd1252"><td class="cell-title"><a href="https://www.notion.so/Trigger-Kafka-events-on-main-buttons-clicks-2c78fb767a6e806db0d2ec30fcdd1252?pvs=21">Trigger Kafka events on main buttons clicks</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-80e5-9e7b-e3e78d225d0f"><td class="cell-title"><a href="https://www.notion.so/Create-flattened-view-of-the-event-data-received-from-Kafka-2c78fb767a6e80e59e7be3e78d225d0f?pvs=21">Create flattened view of the event data received from Kafka</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-804e-a360-f718b4fbc149"><td class="cell-title"><a href="https://www.notion.so/Setup-network-access-to-Confluent-Cloud-2c78fb767a6e804ea360f718b4fbc149?pvs=21">Setup network access to Confluent Cloud</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Setup</td></tr><tr id="2c78fb76-7a6e-80a1-bccb-c45cae8c5359"><td class="cell-title"><a href="https://www.notion.so/Create-UI-for-analytics-query-chatbot-2c78fb767a6e80a1bccbc45cae8c5359?pvs=21">Create UI for analytics query chatbot</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-802e-9ed3-d223f3c1d4a3"><td class="cell-title"><a href="https://www.notion.so/Work-on-logic-for-fetching-text-to-sql-function-2c78fb767a6e802e9ed3d223f3c1d4a3?pvs=21">Work on logic for fetching text to sql function</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-8055-ae08-c5cb1a4c4639"><td class="cell-title"><a href="https://www.notion.so/Integrate-LLM-to-choose-relevant-tables-for-querying-data-2c78fb767a6e8055ae08c5cb1a4c4639?pvs=21">Integrate LLM to choose relevant tables for querying data</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-80d1-a019-e68918b6c160"><td class="cell-title"><a href="https://www.notion.so/Including-AI-insights-and-choice-of-visualization-on-analytics-page-2c78fb767a6e80d1a019e68918b6c160?pvs=21">Including AI insights and choice of visualization on analytics page</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Development</td></tr><tr id="2c78fb76-7a6e-8046-9fda-e44c44c43694"><td class="cell-title"><a href="https://www.notion.so/Deploy-streamlit-code-to-github-2c78fb767a6e80469fdae44c44c43694?pvs=21">Deploy streamlit code to github</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-&gt;g_H">Deployment</td></tr><tr id="2c78fb76-7a6e-806d-a830-d8e2eb8101ee"><td class="cell-title"><a href="https://www.notion.so/Upload-snowflake-ddls-to-github-2c78fb767a6e806da830d8e2eb8101ee?pvs=21">Upload snowflake ddls to github</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Deployment</td></tr><tr id="2c78fb76-7a6e-802c-810d-ca22d8838d00"><td class="cell-title"><a href="https://www.notion.so/Documentation-poster-2c78fb767a6e802c810dca22d8838d00?pvs=21">Documentation: poster</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Documentation</td></tr><tr id="2c78fb76-7a6e-8080-ab87-f0cd15ebae6a"><td class="cell-title"><a href="https://www.notion.so/Documentation-github-readme-2c78fb767a6e8080ab87f0cd15ebae6a?pvs=21">Documentation: github readme</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-orange">Pranali Chipkar</span></td><td class="cell-&gt;g_H">Documentation</td></tr><tr id="2c78fb76-7a6e-80f0-87e0-d9ee6b4845a3"><td class="cell-title"><a href="https://www.notion.so/Documentation-ppt-file-2c78fb767a6e80f087e0d9ee6b4845a3?pvs=21">Documentation: ppt file</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-green">Low</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Documentation</td></tr><tr id="2c78fb76-7a6e-8045-a3e2-deb3eb5acf8d"><td class="cell-title"><a href="https://www.notion.so/Documentation-architecture-diagram-2c78fb767a6e8045a3e2deb3eb5acf8d?pvs=21">Documentation: architecture diagram</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-red">High</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-blue">Siddharth Pawar</span></td><td class="cell-&gt;g_H">Documentation</td></tr><tr id="2c78fb76-7a6e-8028-8ebc-f6dc5de84035"><td class="cell-title"><a href="https://www.notion.so/Updating-Notion-for-the-work-logs-2c78fb767a6e80288ebcf6dc5de84035?pvs=21">Updating Notion for the work logs</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Documentation</td></tr><tr id="2c78fb76-7a6e-8071-a7ac-ec7b86f8307b"><td class="cell-title"><a href="https://www.notion.so/Documentation-YouTube-video-2c78fb767a6e8071a7acec7b86f8307b?pvs=21">Documentation: YouTube video</a></td><td class="cell-G&gt;bJ"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td><td class="cell-R`g&lt;"><span class="selected-value select-value-color-yellow">Medium</span></td><td class="cell-~tOM"><span class="selected-value select-value-color-pink">Aditi Deshmukh</span></td><td class="cell-&gt;g_H">Documentation</td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-807a-a435-d8b481cb1e61" class=""><strong>Challenges Faced:</strong></p></div><div style="display:contents" dir="auto"><p id="2c88fb76-7a6e-802c-8d4b-f082b1e97e3b" class="">- Connection of Confluent Cloud to Snowflake sink connector<br/>- Decisiveness in event structure for product analytics<br/>- Network access configuration between services<br/>- Text-to-SQL function accuracy improvements<br/>- Time management for comprehensive documentation</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-8090-bfae-e1f1dbd5e483"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-8053-b97a-e34d7dd71521" class="">📈 Overall Project Summary</h2></div><div style="display:contents" dir="ltr"><div id="2c78fb76-7a6e-80d0-a74c-f9b1694e8f6d" class="collection-content"><h4 class="collection-title"></h4><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Sprint</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>Duration</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/hashtag_gray.svg" style="width:14px;height:14px;display:block"/></span>Tasks</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/burst_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th></tr></thead><tbody><tr id="2c78fb76-7a6e-80f6-ad0f-f566761df102"><td class="cell-title"><a href="https://www.notion.so/Sprint-1-Foundation-Environment-Setup-2c78fb767a6e80f6ad0ff566761df102?pvs=21">Sprint 1: Foundation &amp; Environment Setup</a></td><td class="cell-=lYp">Sept 13 - Sept 26</td><td class="cell-&gt;`KW">5</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-807a-a2d9-e99b31c6475a"><td class="cell-title"><a href="https://www.notion.so/Sprint-2-Data-Pipeline-Development-Deployment-2c78fb767a6e807aa2d9e99b31c6475a?pvs=21">Sprint 2: Data Pipeline Development &amp; Deployment</a></td><td class="cell-=lYp">Sept 27 - Oct 10</td><td class="cell-&gt;`KW">6</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-8050-a0cc-f5add45cecf3"><td class="cell-title"><a href="https://www.notion.so/Sprint-3-DBT-Data-Modeling-Transformation-2c78fb767a6e8050a0ccf5add45cecf3?pvs=21">Sprint 3: DBT Data Modeling &amp; Transformation</a></td><td class="cell-=lYp">Oct 11 - Oct 24</td><td class="cell-&gt;`KW">5</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-8017-889a-d52eaa5d3cc9"><td class="cell-title"><a href="https://www.notion.so/Sprint-4-Midterm-Subtype-Classification-2c78fb767a6e8017889ad52eaa5d3cc9?pvs=21">Sprint 4: Midterm &amp; Subtype Classification</a></td><td class="cell-=lYp">Oct 25 - Nov 7</td><td class="cell-&gt;`KW">6</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-806a-b80e-d76ab21a10a4"><td class="cell-title"><a href="https://www.notion.so/Sprint-5-User-Management-Risk-Prediction-2c78fb767a6e806ab80ed76ab21a10a4?pvs=21">Sprint 5: User Management &amp; Risk Prediction</a></td><td class="cell-=lYp">Nov 8 - Nov 21</td><td class="cell-&gt;`KW">14</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-8089-9001-d0721033bc13"><td class="cell-title"><a href="https://www.notion.so/Sprint-6-Research-Assistant-Multi-Agent-System-2c78fb767a6e80899001d0721033bc13?pvs=21">Sprint 6: Research Assistant Multi-Agent System</a></td><td class="cell-=lYp">Nov 22 - Dec 5</td><td class="cell-&gt;`KW">10</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr><tr id="2c78fb76-7a6e-8085-939c-d8fa672434cb"><td class="cell-title"><a href="https://www.notion.so/Sprint-7-Product-Analytics-Documentation-2c78fb767a6e8085939cd8fa672434cb?pvs=21">Sprint 7: Product Analytics &amp; Documentation</a></td><td class="cell-=lYp">Dec 6 - Dec 12</td><td class="cell-&gt;`KW">20</td><td class="cell-u;@y"><span class="status-value select-value-color-green"><div class="status-dot status-dot-color-green"></div>Done</span></td></tr></tbody></table><br/><br/></div></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-805a-ab51-c23b34d4519c" class="">Sprint Overview</h3></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-801b-a73f-cbc0d5a0726a" class="">Task Distribution by Member</h3></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8088-ab8d-dbf80c7ae2d8" class="bulleted-list"><li style="list-style-type:disc"><strong>Aditi Deshmukh:</strong> 26 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-80b4-8ae8-e31ccf0da3f4" class="bulleted-list"><li style="list-style-type:disc"><strong>Siddharth Pawar:</strong> 28 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8002-a8bb-d982050fef64" class="bulleted-list"><li style="list-style-type:disc"><strong>Pranali Chipkar:</strong> 26 tasks</li></ul></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-8078-8635-c42d470aa56b" class="">Task Distribution by Type</h3></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-80d8-9bc9-c7f1eea7de00" class="bulleted-list"><li style="list-style-type:disc"><strong>Development:</strong> 54 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-809d-89a9-fc9834aca0af" class="bulleted-list"><li style="list-style-type:disc"><strong>Setup:</strong> 12 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-809a-a0d9-c61921424466" class="bulleted-list"><li style="list-style-type:disc"><strong>Documentation:</strong> 9 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-80ec-aadd-df0c279c4694" class="bulleted-list"><li style="list-style-type:disc"><strong>Research:</strong> 4 tasks</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8002-909c-eff9d1516ad2" class="bulleted-list"><li style="list-style-type:disc"><strong>Deployment:</strong> 1 task</li></ul></div><div style="display:contents" dir="auto"><h3 id="2c78fb76-7a6e-8008-a338-dbed91037bed" class="">Completion Metrics</h3></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-802a-b438-f1b591f7fda3" class="bulleted-list"><li style="list-style-type:disc"><strong>Total Tasks:</strong> 80</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8091-96e3-ebe631c6eed0" class="bulleted-list"><li style="list-style-type:disc"><strong>Completed:</strong> 80 ✅</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8091-8055-f3b5f6732773" class="bulleted-list"><li style="list-style-type:disc"><strong>Completion Rate:</strong> 100%</li></ul></div><div style="display:contents" dir="auto"><ul id="2c78fb76-7a6e-8004-876a-c76bc917637d" class="bulleted-list"><li style="list-style-type:disc"><strong>Project Duration:</strong> 13 weeks (Sept 13 - Dec 12)</li></ul></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-80df-8ff5-e4d7ad20024d"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-80bf-b019-c11d5ef774c3" class="">🎯 Key Achievements</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-8034-bf01-d16f6be6d9cc" class="">✅ Built multimodal RAG system with text and image embeddings<br/>✅ Implemented 7 specialized AI agents<br/>✅ Developed comprehensive risk prediction and subtype classification<br/>✅ Created modern BI analytics pipeline with Kafka<br/>✅ Delivered production-ready Streamlit application<br/>✅ Completed all documentation and demo materials</p></div><div style="display:contents" dir="auto"><hr id="2c78fb76-7a6e-80c0-b41d-cdf73cc5eee9"/></div><div style="display:contents" dir="auto"><h2 id="2c78fb76-7a6e-80fb-b7f3-c52e6853aeae" class="">🛠️ Technical Stack</h2></div><div style="display:contents" dir="auto"><p id="2c78fb76-7a6e-8038-8ba5-e264219446a3" class=""><strong>Data Engineering:</strong> Airflow, DBT, Snowflake, AWS S3<br/><strong>ML/AI:</strong> Snowflake Cortex, Claude Code<br/><strong>Application:</strong> Streamlit, Python<br/><strong>Analytics:</strong> Kafka, Confluent Cloud<br/><strong>DevOps:</strong> Docker, GitHub, VS Code<br/><strong>APIs:</strong> PubMed, ArXiv, SerpAPI, Google Maps API</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
