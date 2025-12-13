@@ -177,6 +177,186 @@ The platform implements 7 specialized agents:
 
 ---
 
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Docker and Docker Compose installed
+- AWS Account with S3 access
+- Snowflake Account
+- Confluent Cloud Account
+
+---
+
+### 1. Airflow Setup
+
+**Install Apache Airflow using Docker:**
+```bash
+# Clone the repository
+git clone https://github.com/your-repo/oncodetect-ai.git
+cd oncodetect-ai
+
+# Initialize Airflow with Docker
+docker-compose up airflow-init
+
+# Start Airflow services
+docker-compose up -d
+```
+
+**Configure Environment Variables:**
+
+Create a `.env` file in the root directory with the following variables:
+```bash
+# AWS Configuration
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_DEFAULT_REGION=your_region
+S3_BUCKET_PAPERS=your_bucket_nme
+S3_BUCKET_IMAGES=your_bucket_nme
+S3_IMAGES_PREFIX=prefix/
+S3_PREFIX=prefix/
+
+# Snowflake Configuration
+SNOWFLAKE_ACCOUNT=your_snowflake_account
+SNOWFLAKE_USER=your_snowflake_user
+SNOWFLAKE_PASSWORD=your_snowflake_password
+SNOWFLAKE_DATABASE=your_database
+SNOWFLAKE_SCHEMA=your_schema
+SNOWFLAKE_WAREHOUSE=your_warehouse
+SNOWFLAKE_ROLE=your_role
+
+# Snowflake Table Names
+SNOWFLAKE_PAPERS_TABLE=your_table_name
+SNOWFLAKE_TEXT_PROCESSED_TABLE=your_table_name
+SNOWFLAKE_TEXT_EMBEDDINGS_TABLE=your_table_name
+SNOWFLAKE_PARSED_TEXT_TABLE=your_table_name
+SNOWFLAKE_IMAGE_EMBEDDINGS_TABLE=your_table_name
+SNOWFLAKE_PARSED_IMAGES_TABLE=your_table_name
+SNOWFLAKE_IMAGES_PROCESSED_TABLE=your_table_name
+
+# Processing Configuration
+BATCH_SIZE=25
+CHUNK_SIZE=1000
+CHUNK_OVERLAP=200
+CORTEX_TEXT_MODEL=snowflake-arctic-embed-m
+CORTEX_IMAGE_MODEL=voyage-multimodal-3
+```
+
+---
+
+### 2. AWS S3 Setup
+
+**Create S3 Buckets:**
+```bash
+# Create bucket for research paper PDFs
+
+# Create bucket for extracted images
+
+# Enable versioning on both buckets
+
+```
+---
+
+### 3. Snowflake Setup
+
+**Create Database Objects:**
+```sql
+-- Execute all DDL scripts from the SQL folder
+
+-- Execute all table creation scripts from /sql folder
+
+```
+
+**Store API Keys:**
+```sql
+-- Insert API keys into CONFIG table
+INSERT INTO ONCODETECT_AI.USER_MANAGEMENT.CONFIG (key, value)
+VALUES 
+  ('GOOGLE_MAPS_API_KEY', 'your_google_maps_api_key'),
+  ('SERPAPI_KEY', 'your_serpapi_key'),
+  ('ARXIV_API_KEY', 'your_arxiv_api_key');
+```
+
+**Create Network Integrations:**
+```sql
+-- Create external access integrations for APIs
+CREATE OR REPLACE NETWORK RULE google_maps_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('maps.googleapis.com');
+
+CREATE OR REPLACE NETWORK RULE serpapi_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('serpapi.com');
+
+```
+
+---
+
+### 4. Confluent Cloud & Kafka Setup
+
+**Create Kafka Topic:**
+```bash
+# Login to Confluent Cloud
+confluent login
+
+# Create topic for application events
+confluent kafka topic create oncodetect-ai-events \
+  --cluster <your-cluster-id> \
+  --partitions 1 \
+  --config retention.ms=604800000
+```
+
+**Define Event Structure:**
+```json
+{
+  "event_id": "abc-123-def-456-ghi-789",
+  "event_type": "user_action_type",
+  "timestamp": "YYYY-MM-DDTHH:MM:SS.000Z",
+  "user_type": "user_type_value",
+  "user_id": "user_id_value",
+  "session_id": "session_id_value",
+  "button_name": "button_name_value",
+  "status": "status_value"
+}
+```
+
+**Snowflake Sink Configuration (`snowflake-sink-config.json`):**
+```json
+{
+  "name": "oncodetect-ai-snowflake-sink",
+  "config": {
+    "connector.class": "SnowflakeSink",
+    "topics": "oncodetect-ai-events",
+    "snowflake.url.name": "your_account.snowflakecomputing.com",
+    "snowflake.user.name": "your_user",
+    "snowflake.private.key": "your_private_key",
+    "snowflake.database.name": "ONCODETECT_AI",
+    "snowflake.schema.name": "ANALYTICS",
+    "buffer.count.records": "10000",
+    "buffer.flush.time": "60",
+    "buffer.size.bytes": "5000000"
+  }
+}
+```
+
+---
+
+### 7. Run Initial Data Pipeline
+```bash
+# Trigger Airflow DAGs
+# DAG 1: Fetch research papers from PubMed
+airflow dags trigger pubmed_ingestion_dag
+
+# DAG 2: Generate text embeddings
+airflow dags trigger text_embedding_dag
+
+# DAG 3: Generate image embeddings
+airflow dags trigger image_embedding_dag
+```
+
+---
+
 ## 📚 References
 
 ### API Documentation
