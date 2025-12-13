@@ -65,6 +65,56 @@ CREATE OR REPLACE TABLE ONCODETECT_DB.PRODUCT_ANALYTICS.USER_FEEDBACK (
 );
 
 -- ============================================================================
+-- TABLE 4: RAG_EVALUATION_LOGS
+-- Purpose: Acts as the central observability log for the RAG (Retrieval-Augmented
+--          Generation) pipeline. It captures every runtime interaction, storing
+--          the full trace from user question to generated answer, alongside the
+--          specific contexts retrieved. Crucially, it stores computed quality metrics
+--          (Faithfulness, Relevancy) to quantify model performance and hallucination rates.
+-- Use Cases:
+--   - Monitor RAG pipeline performance and latency in real-time
+--   - Detect and debug hallucinations (Low Faithfulness Score)
+--   - Analyze retrieval quality by inspecting retrieved contexts vs. answers
+--   - Track specific metrics like Correctness and Relevancy over time
+--   - Identify "drifting" queries where model performance is degrading
+--   - A/B test different LLM models or prompt strategies using score comparison
+-- ============================================================================
+CREATE OR REPLACE TABLE ONCODETECT_DB.PRODUCT_ANALYTICS.RAG_EVALUATION_LOGS (
+    LOG_ID VARCHAR(50),
+    TIMESTAMP TIMESTAMP_NTZ(9),
+    USER_ID VARCHAR(50),
+    QUESTION VARCHAR(16777216),
+    GENERATED_ANSWER VARCHAR(16777216),
+    RETRIEVED_CONTEXTS ARRAY,
+    FAITHFULNESS_SCORE FLOAT,
+    RELEVANCY_SCORE FLOAT,
+    CONTEXT_QUALITY_SCORE FLOAT,
+    OVERALL_SCORE FLOAT,
+    CORRECTNESS_SCORE FLOAT
+);
+
+-- ============================================================================
+-- TABLE 5: GOLDEN_DATASET
+-- Purpose: Serves as the "Ground Truth" reference library for automated model
+--          evaluation. It stores verified question-answer pairs that define
+--          ideal behavior. The inclusion of vector embeddings allows the system
+--          to semantically match incoming user queries against this dataset to
+--          automatically grade answers or provide few-shot examples.
+-- Use Cases:
+--   - Run regression testing before deploying new RAG pipeline versions
+--   - Calculate "Correctness" scores by comparing generated answers to Ground Truth
+--   - Enable semantic search to find similar historical questions
+--   - Bootstrapping few-shot prompting context for the LLM
+--   - Establish a baseline benchmark for model accuracy
+-- ============================================================================
+CREATE OR REPLACE TABLE ONCODETECT_DB.PRODUCT_ANALYTICS.GOLDEN_DATASET (
+    GOLDEN_ID VARCHAR(50) DEFAULT UUID_STRING(),
+    QUESTION VARCHAR(16777216),
+    GROUND_TRUTH_ANSWER VARCHAR(16777216),
+    QUESTION_EMBEDDING VECTOR(FLOAT, 768)
+);
+
+-- ============================================================================
 -- VIEW 1: USER_ACQUISITION_EVENTS
 -- Purpose: Transforms semi-structured authentication data into a structured
 --          view for analyzing user acquisition and interaction events. Extracts
