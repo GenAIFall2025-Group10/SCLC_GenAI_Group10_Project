@@ -2,7 +2,7 @@
 
 > An AI-powered platform for Small Cell Lung Cancer (SCLC) research, risk prediction, and molecular subtype classification using multimodal RAG and multi-agent architecture.
 
-[![Watch Demo](https://img.shields.io/badge/YouTube-Demo-red?style=for-the-badge&logo=youtube)](YOUR_YOUTUBE_LINK_HERE)
+[![Watch Demo](https://img.shields.io/badge/YouTube-Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/dcm3u0esiF4)
 [![Project Tracker](https://img.shields.io/badge/Project-Tracker-blue?style=for-the-badge&logo=notion)](https://github.com/GenAIFall2025-Group10/SCLC_GenAI_Group10_Project/blob/main/documentation/OncoDetectAI_Project_Tracker.pdf)
 [![Codelabs](https://img.shields.io/badge/View-Codelabs-orange?style=for-the-badge&logo=google)](https://codelabs-preview.appspot.com/?file_id=1fpYOL5b-wnK3izmBTfenKjzkmqsbFCd8KYCp2MHNu5k/edit?tab=t.0#8)
 
